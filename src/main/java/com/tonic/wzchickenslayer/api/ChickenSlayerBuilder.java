@@ -69,11 +69,14 @@ public class ChickenSlayerBuilder extends AbstractHandlerBuilder<ChickenSlayerBu
         String[] lootItems = {"Feather","Bones"};
 
         add("start", context -> {
+
+            if (InventoryAPI.isFull())
+                return jump("bury", context);
+
             if (PlayerEx.getLocal().isIdle() && !PlayerEx.getLocal().healthBarVisible() ) {
                 return jump("attack", context);
             }
-            if (InventoryAPI.isFull())
-                return jump("bury", context);
+
 
             return jump("start", context);
 
@@ -87,9 +90,7 @@ public class ChickenSlayerBuilder extends AbstractHandlerBuilder<ChickenSlayerBu
 
 //            chicken.getTile().setGroundObject();
             ClickManagerUtil.queueClickBox(npc);
-            Logger.info("Pre attack Health: "+npc.healthBarVisible());
             NpcAPI.interact(npc, "Attack");
-            Logger.info("Post attack Health: "+npc.healthBarVisible());
 
             // Store npc in context for other states
             context.put("targetNPC", npc);
