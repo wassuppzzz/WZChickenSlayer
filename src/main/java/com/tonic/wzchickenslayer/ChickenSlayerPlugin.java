@@ -1,6 +1,7 @@
 package com.tonic.wzchickenslayer;
 
 import com.tonic.Logger;
+import com.tonic.services.breakhandler.BreakHandler;
 import com.tonic.wzchickenslayer.api.ChickenAPI;
 
 import com.tonic.wzchickenslayer.data.State;
@@ -23,7 +24,7 @@ public class ChickenSlayerPlugin extends Plugin {
     @Inject
     public OverlayManager overlayManager;
     @Inject
-//    private BreakHandler breakHandler;
+    private BreakHandler breakHandler;
     private ChickenOverlay overlay;
     private SidePanel panel;
     private NavigationButton navButton;
@@ -31,8 +32,10 @@ public class ChickenSlayerPlugin extends Plugin {
 
     @Override
     protected void startUp() {
-        panel = injector.getInstance(SidePanel.class);
+//        overlayManager.add(overlay);
 
+        breakHandler.register(this);
+        panel = injector.getInstance(SidePanel.class);
         navButton = NavigationButton.builder()
                 .tooltip("WZ Chicken Slayer")
                 .icon(ImageUtil.loadImageResource(getClass(), "icon.png"))
@@ -40,19 +43,15 @@ public class ChickenSlayerPlugin extends Plugin {
                 .build();
 
         clientToolbar.addNavigation(navButton);
-//        breakHandler.register(this);
-
-
-        overlayManager.add(overlay);
         reset();
-
     }
 
     @Override
     protected void shutDown() {
+        breakHandler.unregister(this);
         clientToolbar.removeNavigation(navButton);
         overlayManager.remove(overlay);
-//        breakHandler.unregister(this);
+
 
         reset();
     }
@@ -85,8 +84,14 @@ public class ChickenSlayerPlugin extends Plugin {
             return;
         }
 
-//        if(breakHandler.isBreaking(this))
-//            return;
+        try {
+            if (breakHandler != null && breakHandler.isBreaking(this)) {
+                Logger.info("WZ ChickenSlayer: On break, returning");
+                return;
+            }
+        } catch (Exception ex) {
+
+        }
 
         // Start new round if started but not yet running
         if (panel.isRunning() && state == null) {
@@ -110,11 +115,11 @@ public class ChickenSlayerPlugin extends Plugin {
 
     public void startBreaks()
     {
-//        breakHandler.start(this);
+        breakHandler.start(this);
     }
 
     public void stopBreaks()
     {
-//        breakHandler.stop(this);
+        breakHandler.stop(this);
     }
 }

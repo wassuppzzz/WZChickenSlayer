@@ -11,6 +11,8 @@ import com.tonic.util.handler.StepHandler;
 import net.runelite.api.TileItem;
 import net.runelite.api.gameval.ItemID;
 
+import static com.tonic.api.game.MovementAPI.walkAproxWorldPoint;
+import static com.tonic.api.game.MovementAPI.walkRelativeToWorldPoint;
 import static com.tonic.wzchickenslayer.api.ChickenAPI.ChickenPEN;
 
 
@@ -52,6 +54,8 @@ public class ChickenSlayerBuilder extends AbstractHandlerBuilder<ChickenSlayerBu
 
     private ChickenSlayerBuilder walkChickenArea() {
         walkTo(ChickenPEN);
+
+//        walkAproxWorldPoint(ChickenPEN,4);
         return this;
     }
 

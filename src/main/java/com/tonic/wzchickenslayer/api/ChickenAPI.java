@@ -10,7 +10,7 @@ import net.runelite.api.coords.WorldPoint;
  */
 public class ChickenAPI
 {
-    public static final WorldPoint ChickenPEN = new WorldPoint(3165, 3486, 0);
+    public static final WorldPoint ChickenPEN = new WorldPoint(3177, 3295, 0);
 
 
     }

@@ -39,7 +39,7 @@ public class ChickenOverlay extends VitaOverlay {
                 newLine("Preparation Phase", 14, Color.CYAN);
                 break;
             case GAME:
-                newLine("In Game", 14, Color.GREEN);
+                newLine("Slaying", 14, Color.GREEN);
                 break;
         }
     }
