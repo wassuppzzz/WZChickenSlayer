@@ -25,6 +25,7 @@ public class ChickenSlayerPlugin extends Plugin {
     public OverlayManager overlayManager;
     @Inject
     private BreakHandler breakHandler;
+    @Inject
     private ChickenOverlay overlay;
     private SidePanel panel;
     private NavigationButton navButton;
@@ -32,9 +33,8 @@ public class ChickenSlayerPlugin extends Plugin {
 
     @Override
     protected void startUp() {
-//        overlayManager.add(overlay);
 
-        breakHandler.register(this);
+
         panel = injector.getInstance(SidePanel.class);
         navButton = NavigationButton.builder()
                 .tooltip("WZ Chicken Slayer")
@@ -43,16 +43,17 @@ public class ChickenSlayerPlugin extends Plugin {
                 .build();
 
         clientToolbar.addNavigation(navButton);
+        breakHandler.register(this);
+        overlayManager.add(overlay);
+
         reset();
     }
 
     @Override
     protected void shutDown() {
-        breakHandler.unregister(this);
         clientToolbar.removeNavigation(navButton);
         overlayManager.remove(overlay);
-
-
+        breakHandler.unregister(this);
         reset();
     }
 
