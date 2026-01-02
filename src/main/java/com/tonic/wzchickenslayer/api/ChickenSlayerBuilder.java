@@ -107,24 +107,35 @@ public class ChickenSlayerBuilder extends AbstractHandlerBuilder<ChickenSlayerBu
             return jump("combat", context);
         });
         addDelay("DeathDelay",6) ;
-        add("loot", (context) -> {
-            Logger.info("Looting Items: "+lootItems[0]);
-            TileItemEx item = TileItemAPI.search().withName(lootItems[0]).nearest();
-            if(passesOwnershipFilter(item)) {
-                TileItemAPI.interact(item, "Take");
-            }
-        });
-        addDelay(4);
-        add("loot2",(context) -> {
-            Logger.info("Looting Items: "+lootItems[1]);
-            TileItemEx item = TileItemAPI.search().withName(lootItems[1]).nearest();
-            if(passesOwnershipFilter(item)) {
-                TileItemAPI.interact(item, "Take");
-            }
-            return jump("start", context);
+        // Dynamically generate loot states with delays
+        for (int i = 0; i < lootItems.length; i++) {
+            final int index = i;
+            final String lootStateName = "loot" + i;
+            final String delayStateName = "delay" + i;
 
-        });
-        addDelay(4);
+            // Create loot state
+            add(lootStateName, context -> {
+                Logger.info("Looting Items: " + lootItems[index]);
+                TileItemEx item = TileItemAPI.search().withName(lootItems[index]).nearest();
+                if (passesOwnershipFilter(item)) {
+                    TileItemAPI.interact(item, "Take");
+                }
+
+                // Jump to corresponding delay state
+                return jump(delayStateName, context);
+            });
+
+            // Create delay state
+            addDelay(delayStateName, 4);
+            add(delayStateName, context -> {
+                // After delay, jump to next loot state or back to start
+                if (index < lootItems.length - 1) {
+                    return jump("loot" + (index + 1), context);
+                } else {
+                    return jump("start", context);
+                }
+            });
+        }
         add("bury", context -> {
             if (InventoryAPI.count(ItemID.BONES) < 1)
                 return jump("start", context);
